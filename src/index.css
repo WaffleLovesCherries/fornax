@@ -1,0 +1,697 @@
+/* ============================================================================
+   FORNAX — sistema de diseño "gym industrial"
+   Negro casi total, tipografía display condensada (Anton), cuerpo Barlow,
+   dígitos y micro-etiquetas en IBM Plex Mono. El color de sesión entra por
+   la variable --c (y su acento --ca) inyectada inline por componente.
+   ========================================================================== */
+
+:root {
+  --bg: #0a0a0c;
+  --surface: #121216;
+  --surface-2: #18181e;
+  --line: #232329;
+  --line-soft: #1b1b21;
+  --ink: #ececec;
+  --ink-dim: #9a9aa2;
+  --ink-faint: #5b5b64;
+  --warn: #e8c52f;
+
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { color-scheme: dark; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Grano sutil sobre toda la app */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+input { font-family: inherit; color: inherit; }
+
+.app {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 18px 56px;
+  position: relative;
+}
+
+/* --- Cabecera -------------------------------------------------------------- */
+
+.app-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 26px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 34px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  background: linear-gradient(180deg, #fff 30%, #8a8a92);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tagline {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  margin-top: 6px;
+}
+
+.data-btns { display: flex; gap: 8px; }
+
+.data-btns button {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  background: var(--surface);
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.data-btns button:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+/* --- Tabs ------------------------------------------------------------------ */
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 18px 0 22px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.tabs button {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  padding: 12px 0;
+  color: var(--ink-faint);
+  position: relative;
+  transition: color 0.15s, background 0.15s;
+}
+
+.tabs button + button { border-left: 1px solid var(--line); }
+
+.tabs button.on {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.tabs button.on::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--ink);
+}
+
+/* --- Utilidades ------------------------------------------------------------ */
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  color: var(--ink-faint);
+}
+
+.kicker.warn { color: var(--warn); }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- Selector de sesión ----------------------------------------------------- */
+
+.picker-title {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 0.98;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 10px 0 26px;
+}
+
+.session-cards { display: grid; gap: 12px; }
+
+.session-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  padding: 22px 20px 38px;
+  background: linear-gradient(100deg, var(--surface) 60%, color-mix(in srgb, var(--c) 14%, var(--surface)));
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--c);
+  overflow: hidden;
+  animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.session-card:hover { transform: translateX(4px); border-color: var(--c); }
+.session-card:active { transform: translateX(4px) scale(0.99); }
+
+.session-card::before {
+  content: '';
+  position: absolute;
+  right: -30px; top: 50%;
+  width: 150px; height: 150px;
+  transform: translateY(-50%) rotate(18deg);
+  background: repeating-linear-gradient(45deg, var(--c) 0 2px, transparent 2px 12px);
+  opacity: 0.12;
+}
+
+.session-index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--c);
+  align-self: start;
+  padding-top: 6px;
+}
+
+.session-name {
+  font-family: var(--font-display);
+  font-size: 38px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.session-info {
+  position: absolute;
+  left: 60px; bottom: 12px;
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+}
+
+.session-last { color: var(--ca); }
+
+.session-arrow {
+  font-size: 22px;
+  color: var(--c);
+  justify-self: end;
+}
+
+/* --- Entrenamiento ----------------------------------------------------------- */
+
+.training-head {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0 12px;
+  margin-bottom: 14px;
+  background: linear-gradient(var(--bg) 86%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+
+.training-title h2 {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--c);
+  margin-top: 6px;
+}
+
+.training-progress { text-align: right; min-width: 110px; }
+
+.progress-count {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.progress-count i {
+  font-style: normal;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.progress-bar {
+  margin-top: 6px;
+  height: 4px;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+
+.progress-bar > div {
+  height: 100%;
+  background: var(--c);
+  transition: width 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.exercise-list { display: grid; gap: 10px; }
+
+/* --- Tarjeta de ejercicio ----------------------------------------------------- */
+
+.exercise-card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--c);
+  padding: 14px 14px 12px;
+  animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transition: opacity 0.25s, border-color 0.25s;
+}
+
+.exercise-card.done { opacity: 0.55; }
+.exercise-card.done .card-title h3 { text-decoration: line-through; text-decoration-color: var(--c); }
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.check {
+  flex: none;
+  width: 26px; height: 26px;
+  margin-top: 2px;
+  border: 2px solid var(--ink-faint);
+  display: grid;
+  place-items: center;
+  color: transparent;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.check svg { width: 14px; height: 14px; }
+
+.exercise-card.done .check {
+  border-color: var(--c);
+  background: var(--c);
+  color: #0a0a0c;
+}
+
+.card-title { flex: 1; min-width: 0; }
+
+.card-title h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.core-tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--ca);
+  border: 1px solid color-mix(in srgb, var(--ca) 50%, transparent);
+  padding: 2px 5px;
+}
+
+.muscles {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.card-dose {
+  text-align: right;
+  font-family: var(--font-mono);
+  flex: none;
+}
+
+.dose-sets {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ca);
+}
+
+.dose-rpe {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+  letter-spacing: 0.06em;
+}
+
+.card-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.weight-input { display: flex; align-items: stretch; }
+
+.weight-input input {
+  width: 86px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-right: none;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.weight-input input:focus {
+  outline: none;
+  border-color: var(--c);
+}
+
+.weight-input input::placeholder { color: var(--ink-faint); }
+
+.unit-toggle { display: flex; border: 1px solid var(--line); }
+
+.unit-toggle button {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0 11px;
+  color: var(--ink-faint);
+  transition: color 0.12s, background 0.12s;
+}
+
+.unit-toggle button + button { border-left: 1px solid var(--line); }
+
+.unit-toggle button.on {
+  color: #0a0a0c;
+  background: var(--c);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.last-weight {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.note-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--ink-dim);
+  border: 1px solid var(--line);
+  padding: 6px 9px;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.note-btn:hover, .note-btn.open { color: var(--ca); border-color: var(--ca); }
+
+.note {
+  margin-top: 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-dim);
+  background: var(--bg);
+  border-left: 2px solid var(--ca);
+}
+
+/* --- Pie de entrenamiento ------------------------------------------------------ */
+
+.training-foot {
+  position: sticky;
+  bottom: 0;
+  margin-top: 18px;
+  padding: 14px 0 16px;
+  background: linear-gradient(transparent, var(--bg) 30%);
+  text-align: center;
+}
+
+.finish-btn {
+  width: 100%;
+  padding: 17px 0;
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: all 0.25s;
+}
+
+.finish-btn.ready {
+  color: #0a0a0c;
+  background:
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.16) 0 14px, transparent 14px 28px),
+    var(--c);
+  border-color: var(--c);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--c) 38%, transparent);
+}
+
+.finish-btn.ready:active { transform: scale(0.985); }
+
+.discard-btn {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.discard-btn:hover { color: var(--ink-dim); }
+
+.discard-confirm {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.discard-confirm button {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+  color: var(--ink-dim);
+}
+
+.discard-confirm button:first-of-type { color: #e85d5d; border-color: #5a2727; }
+
+/* --- Métricas ------------------------------------------------------------------ */
+
+.metrics { animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+.metrics-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin: 8px 0 20px;
+}
+
+.exercise-select { display: grid; gap: 14px; margin-bottom: 20px; }
+
+.select-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  color: var(--c);
+  margin-bottom: 7px;
+}
+
+.select-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 6px 11px;
+  color: var(--ink-dim);
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  transition: all 0.12s;
+}
+
+.chip:hover { border-color: var(--ink-faint); }
+
+.chip.on {
+  color: #0a0a0c;
+  background: var(--c);
+  border-color: var(--c);
+  font-weight: 600;
+}
+
+.chart-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--c);
+  padding: 16px 14px 8px;
+}
+
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-head h3 { font-size: 15px; font-weight: 600; }
+
+.chart-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.chart { width: 100%; height: auto; display: block; }
+
+.chart-grid { stroke: var(--line-soft); stroke-width: 1; }
+
+.chart-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  fill: var(--ink-faint);
+}
+
+.chart-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chart-empty {
+  padding: 38px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* --- Estancados ------------------------------------------------------------------ */
+
+.stale-panel {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.stale-empty {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+
+.stale-list { list-style: none; display: grid; gap: 10px; margin-top: 12px; }
+
+.stale-list li {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--warn);
+  padding: 12px 14px;
+}
+
+.stale-info { display: flex; flex-direction: column; gap: 2px; }
+
+.stale-info strong { font-size: 14px; font-weight: 600; }
+
+.stale-info span {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--c);
+}
+
+.stale-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* --- Celebración ------------------------------------------------------------------ */
+
+@keyframes stamp {
+  0%   { opacity: 0; transform: scale(1.6) rotate(-4deg); }
+  18%  { opacity: 1; transform: scale(1) rotate(-2deg); }
+  80%  { opacity: 1; transform: scale(1) rotate(-2deg); }
+  100% { opacity: 0; transform: scale(0.96) rotate(-2deg); }
+}
+
+.celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  text-align: center;
+  background: color-mix(in srgb, var(--bg) 88%, var(--c));
+  backdrop-filter: blur(3px);
+  animation: stamp 2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  pointer-events: none;
+}
+
+.celebrate .kicker { color: var(--ca); }
+
+.celebrate span {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1;
+  color: var(--c);
+  border: 4px solid var(--c);
+  padding: 10px 24px;
+  text-shadow: 0 0 40px color-mix(in srgb, var(--c) 60%, transparent);
+}

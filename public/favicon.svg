@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#0a0a0c"/>
+  <rect x="0" y="0" width="64" height="6" fill="#e85d2f"/>
+  <rect x="0" y="58" width="64" height="6" fill="#1db87a"/>
+  <!-- barra con discos -->
+  <rect x="6" y="28" width="52" height="8" fill="#ececec"/>
+  <rect x="10" y="18" width="8" height="28" fill="#e85d2f"/>
+  <rect x="46" y="18" width="8" height="28" fill="#2f7ee8"/>
+</svg>
